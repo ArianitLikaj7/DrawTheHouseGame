@@ -1,0 +1,131 @@
+import java.util.Scanner;
+
+class Die {
+    public int throwDie() {
+        return (int) (Math.random() * 6) + 1;
+    }
+}
+
+class House {
+    private boolean building;
+    private boolean roof;
+    private boolean door;
+    private boolean window1;
+    private boolean window2;
+
+    public House() {
+        building = false;
+        roof = false;
+        door = false;
+        window1 = false;
+        window2 = false;
+    }
+
+    public void buildBuilding() {
+        building = true;
+    }
+
+    public void buildRoof() {
+        roof = true;
+    }
+
+    public void buildDoor() {
+        door = true;
+    }
+
+    public void buildWindow1() {
+        window1 = true;
+    }
+
+    public void buildWindow2() {
+        window2 = true;
+    }
+
+    public boolean isHouseComplete() {
+        return building && roof && door && window1 && window2;
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("  /\\\n");
+        sb.append(" /  \\\n");
+        sb.append("-----\n");
+        sb.append("|  _  |\n");
+
+        if (door)
+            sb.append("|x| |x|\n");
+        else
+            sb.append("|     |\n");
+
+        sb.append("-----\n");
+
+        return sb.toString();
+    }
+}
+
+class GameController {
+    private Die die;
+    private House house;
+
+    public GameController() {
+        die = new Die();
+        house = new House();
+    }
+
+    public void playGame() {
+        while (!house.isHouseComplete()) {
+            int diceRoll = die.throwDie();
+            System.out.println("You rolled a " + diceRoll);
+
+            switch (diceRoll) {
+                case 6:
+                    house.buildBuilding();
+                    System.out.println("You built the building!");
+                    break;
+                case 5:
+                    if (!house.isBuildingBuilt()) {
+                        System.out.println("You can't build the roof yet. Build the building first.");
+                        continue;
+                    }
+                    house.buildRoof();
+                    System.out.println("You built the roof!");
+                    break;
+                case 4:
+                    if (!house.isRoofBuilt()) {
+                        System.out.println("You can't build the door yet. Build the roof first.");
+                        continue;
+                    }
+                    house.buildDoor();
+                    System.out.println("You built the door!");
+                    break;
+                case 3:
+                    if (!house.isRoofBuilt()) {
+                        System.out.println("You can't build the windows yet. Build the roof first.");
+                        continue;
+                    }
+                    if (!house.isWindow1Built()) {
+                        house.buildWindow1();
+                        System.out.println("You built window 1!");
+                    } else if (!house.isWindow2Built()) {
+                        house.buildWindow2();
+                        System.out.println("You built window 2!");
+                    }
+                    break;
+                default:
+                    System.out.println("You rolled " + diceRoll + ". Nothing to build.");
+            }
+
+            System.out.println(house.toString());
+        }
+
+        System.out.println("Congratulations! The house is complete!");
+    }
+}
+
+public class DrawTheHouseGame {
+    public static void main(String[] args) {
+        GameController gameController = new GameController();
+        gameController.playGame();
+    }
+}
